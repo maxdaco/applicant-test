@@ -1,0 +1,32 @@
+version: "3.4"
+
+x-host-volume:
+  &host-volume
+    ./src:/var/www/html
+
+volumes:
+  db:
+
+services:
+  nginx:
+    build: nginx
+    ports:
+      - "89:89"
+    volumes:
+      - *host-volume
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+
+  php:
+    build: php
+    volumes:
+      - *host-volume
+
+  db:
+    image: mariadb:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: test
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - db:/var/lib/mysql
